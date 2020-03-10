@@ -38,29 +38,30 @@ class ticks(Base):
         self.data = data
 
 
-x = []
-j = 0
-i=1
-test = True
-while test:
-    try:
-        test = session.query(ticks).get(i)
-        #print(test.name,i)
-        #вывод и получения данных
-        #print(test.data)
-        y = (pickle.loads(test.data)["frames_x16"])
-        y = np.asarray(y)
-        x.append(y)
-        #print(x)
-        i+=1
-    except:
-        test = None
-        print('Кол-во элементов:',i)
-    #j+=1
-print(x)
-y = np.asarray(x)
-print(x)
-np.save('array4', x)
-from sklearn.datasets import make_blobs
-import pandas as pd
-from sklearn.cluster import DBSCAN
+def load_data(n):
+    x = []
+    j = 0
+    i=1
+    names = []
+    test = True
+    while j < n:
+        try:
+            test = session.query(ticks).get(i)
+            names.append(test.name)
+            #print(test.name,i)
+            #вывод и получения данных
+            #print(test.data)
+            y = (pickle.loads(test.data)["frames_x16"])
+
+            y = np.asarray(y)
+            x.append(y)
+            #print(x)
+            i+=1
+        except:
+            test = None
+            print('Кол-во элементов:',i)
+        j+=1
+    #print(x)
+    y = np.asarray(x)
+    #print(x)
+    return y, names
