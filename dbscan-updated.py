@@ -4,19 +4,21 @@ from sklearn.cluster import DBSCAN
 from sklearn import metrics
 from sklearn.datasets import make_blobs
 from sklearn.preprocessing import StandardScaler
+import test6
+import matplotlib.pyplot as plt
 
-
-# #############################################################################
 #centers = [[1, 1], [-1, -1], [1, -1]]
 
 # Array loading
-a = np.load('array5.npy')
+a, names = test6.load_data(400)
+#a = np.load('array5.npy')
 # 4d to 2d
-y = np.reshape(a,(200,-1))
+
+y = np.reshape(a,(400,-1))
 X = y
 X = StandardScaler().fit_transform(X)
 
-# #############################################################################
+
 # Compute DBSCAN
 db = DBSCAN(eps=10, min_samples=3).fit(X)
 core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
@@ -26,16 +28,51 @@ labels = db.labels_
 # Number of clusters in labels, ignoring noise if present.
 n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 n_noise_ = list(labels).count(-1)
+print('Estimated number of clusters: %d' % n_clusters_)
+print('Estimated number of noise points: %d' % n_noise_)
+print(pd.Series(labels).value_counts())
+
 g = {}
 for i in range(n_clusters_):
     g[i] = []
     for k in range(len(list(labels))):
         if list(labels)[k] == i:
             g[i].append(k)
-print (g)
-print('Estimated number of clusters: %d' % n_clusters_)
-print('Estimated number of noise points: %d' % n_noise_)
-print(pd.Series(labels).value_counts())
+for cluster in g.keys():
+    print("Cluster",cluster)
+    print("----------------")
+    for ind in g[cluster]:
+        print (names[ind])
+array_of_axes = []
+for index1 in range (256):
+    array_of_axes.append(index1)
+
+print(g)
+
+c = []
+num_event = 10
+num_module = 2
+num_element = 2
+for i in range(256):
+    c.append(a[num_event][i][num_module][num_element])
+print(c)
+
+print(array_of_axes)
+ylist = c
+xlist = array_of_axes
+#dx = 10
+#dy = 1
+graphic1 = plt.plot(xlist, ylist)
+plt.show(graphic1)
+
+
+
+
+
+
+
+
+
 #print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels_true, labels))
 #print("Completeness: %0.3f" % metrics.completeness_score(labels_true, labels))
 #print("V-measure: %0.3f" % metrics.v_measure_score(labels_true, labels))
@@ -43,9 +80,9 @@ print(pd.Series(labels).value_counts())
 #print("Adjusted Mutual Information: %0.3f"% metrics.adjusted_mutual_info_score(labels_true, labels))
 #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-# #############################################################################
+
 # Plot result
-import matplotlib.pyplot as plt
+
 
 # Black removed and is used for noise instead.
 unique_labels = set(labels)
@@ -64,7 +101,7 @@ for k, col in zip(unique_labels, colors):
 
     xy = X[class_member_mask & ~core_samples_mask]
     plt.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=tuple(col),
-             markeredgecolor='k', markersize=0.01)
+             markeredgecolor='k', markersize=0.1)
 
 plt.title('Estimated number of clusters: %d' % n_clusters_)
 plt.show()
