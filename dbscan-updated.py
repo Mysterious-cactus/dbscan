@@ -4,23 +4,22 @@ from sklearn.cluster import DBSCAN
 from sklearn import metrics
 from sklearn.datasets import make_blobs
 from sklearn.preprocessing import StandardScaler
-import test6
+import base
 import matplotlib.pyplot as plt
 
-#centers = [[1, 1], [-1, -1], [1, -1]]
+
 
 # Array loading
-a, names = test6.load_data(400)
-#a = np.load('array5.npy')
+a = base.loading_data()
+names = base.loading_names()
 # 4d to 2d
-
-y = np.reshape(a,(400,-1))
+y = np.reshape(a,(1187,-1))
 X = y
 X = StandardScaler().fit_transform(X)
 
 
 # Compute DBSCAN
-db = DBSCAN(eps=10, min_samples=3).fit(X)
+db = DBSCAN(eps=43, min_samples=3).fit(X)
 core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
 core_samples_mask[db.core_sample_indices_] = True
 labels = db.labels_
@@ -44,33 +43,30 @@ for cluster in g.keys():
     for ind in g[cluster]:
         print (names[ind])
 array_of_axes = []
+time = 0
 for index1 in range (256):
-    array_of_axes.append(index1)
+    array_of_axes.append(time)
+    time += 0.0064
 
 print(g)
 
 c = []
-num_event = 10
+num_event = 0
 num_module = 2
 num_element = 2
 for i in range(256):
     c.append(a[num_event][i][num_module][num_element])
 print(c)
-
-print(array_of_axes)
+summary = sum(c)
+summary = summary/256
+print(summary)
+#print(array_of_axes)
 ylist = c
 xlist = array_of_axes
 #dx = 10
 #dy = 1
-graphic1 = plt.plot(xlist, ylist)
-plt.show(graphic1)
 
-
-
-
-
-
-
+plt.show(plt.plot(xlist, ylist))
 
 
 #print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels_true, labels))
